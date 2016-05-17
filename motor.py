@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 #port is the variable that takes a port name.
 #here is a list of ports with descriptions:
@@ -34,10 +35,18 @@ class Motor():
                 #if the port name can be found in address, then execute the code below
                 self.port = port
                 self.N = item
-		#sends a reset command to the motor to use it
-        command = open("/sys/class/tacho-motor/" + self.N + "/command", "w")
-        command.write("reset")
-        command.close()
+        try:
+            subprocess.run(["sudo", "chown", "root:root", "/sys/class/tacho-motor/"+ self.N + "/command"])
+            subprocess.run(["sudo", "chown", "u+rw", "/sys/class/tacho-motor/"+ self.N + "/command"])
+            subprocess.run(["sudo", "chown", "g+rw", "/sys/class/tacho-motor/"+ self.N + "/command"])
+        except:
+            return "An error occurred while executing the following commands: 'sudo chown root:root /sys/class/tacho-motor/"+ self.N + "/command', 'sudo chmod u+rw /sys/class/tacho-motor/"+ self.N + "/command', 'sudo chmod g+rw /sys/class/tacho-motor/"+ self.N + "/command'. Maybe you are not root?"
+	finally:
+            #sends a reset command to the motor to use it        
+            command = open("/sys/class/tacho-motor/" + self.N + "/command", "w")
+            command.write("reset")
+            command.close()
+            return 0
     def load_new(self):
         #finds the number of the port again, its useful, if an error occurred during writing a file
         for item in os.listdir("/sys/class/tacho-motor"):
