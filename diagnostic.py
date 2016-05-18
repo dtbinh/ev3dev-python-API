@@ -55,9 +55,9 @@ class diagnostic():
                 print("trying to make the problem an end")
                 #this three terminal commands below should make the problem an end
                 try:
-                    subprocess.run(["sudo", "chown", "root:root", "/sys/class/tacho-motor/"+ self.N + "/command"])
-                    subprocess.run(["sudo", "chown", "u+rw", "/sys/class/tacho-motor/"+ self.N + "/command"])
-                    subprocess.run(["sudo", "chown", "g+rw", "/sys/class/tacho-motor/"+ self.N + "/command"])
+                    os.system("sudo chown root:root /sys/class/tacho-motor/"+ self.N + "/command")
+                    os.system("sudo chmod u+rw /sys/class/tacho-motor/"+ self.N + "/command")
+                    os.system("sudo chmod g+rw /sys/class/tacho-motor/" + self.N + "/command")
                 except:
                     print("Execute the following commands with root privilegs:")
                     print("sudo chown root:root /sys/class/tacho-motor/" + self.N + "/command")

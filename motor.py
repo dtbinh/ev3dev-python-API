@@ -1,5 +1,4 @@
 import os
-import subprocess
 
 #port is the variable that takes a port name.
 #here is a list of ports with descriptions:
@@ -36,17 +35,17 @@ class Motor():
                 self.port = port
                 self.N = item
         try:
-            subprocess.run(["sudo", "chown", "root:root", "/sys/class/tacho-motor/"+ self.N + "/command"])
-            subprocess.run(["sudo", "chown", "u+rw", "/sys/class/tacho-motor/"+ self.N + "/command"])
-            subprocess.run(["sudo", "chown", "g+rw", "/sys/class/tacho-motor/"+ self.N + "/command"])
+            os.system("sudo chown root:root /sys/class/tacho-motor/"+ self.N + "/command")
+            os.system("sudo chmod u+rw /sys/class/tacho-motor/"+ self.N + "/command")
+            os.system("sudo chmod g+rw /sys/class/tacho-motor/" + self.N + "/command")
         except:
             return "An error occurred while executing the following commands: 'sudo chown root:root /sys/class/tacho-motor/"+ self.N + "/command', 'sudo chmod u+rw /sys/class/tacho-motor/"+ self.N + "/command', 'sudo chmod g+rw /sys/class/tacho-motor/"+ self.N + "/command'. Maybe you are not root?"
-	finally:
+        finally:
             #sends a reset command to the motor to use it        
             command = open("/sys/class/tacho-motor/" + self.N + "/command", "w")
             command.write("reset")
             command.close()
-            return 0
+            return None
     def load_new(self):
         #finds the number of the port again, its useful, if an error occurred during writing a file
         for item in os.listdir("/sys/class/tacho-motor"):
@@ -62,7 +61,7 @@ class Motor():
     def run_forever(self, speed):
 	#runs the motor with the given speed until another command is send
         command = open("/sys/class/tacho-motor/" + self.N + "/command", "w")
-        command_speed = open("/sys/class/tacho-motor/" + self.N + "/duty_cycle_sp", "w")
+        command_speed = open("/sys/class/tacho-motor/" + self.N + "/speed_sp", "w")
         command_speed.write(str(speed))
         command_speed.close()
         command.write("run-forever")
@@ -330,7 +329,7 @@ class Motor():
             command.write(str(value))
             command.close()
     def time_sp(self, value=None):
-	#reads or writes the run time for the motor
+	#reads or writes the run time for the motor (in secnds)
         if value == None:
             command = open("/sys/class/tacho-motor/" + self.N + "/time_sp", "r")
             t_s = str(command.read())
