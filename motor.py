@@ -29,11 +29,14 @@ class Motor():
         for item in os.listdir("/sys/class/tacho-motor"):
             rpn = open("/sys/class/tacho-motor/" + item + "/address", "r")
             address = rpn.read()
+            address = address.replace("\n", "")
             rpn.close()
-            if address.find(port) > -2:
+            if address == port:
+                print(port + " found as " + item)
                 #if the port name can be found in address, then execute the code below
                 self.port = port
                 self.N = item
+                break
         try:
             os.system("sudo chown root:root /sys/class/tacho-motor/"+ self.N + "/command")
             os.system("sudo chmod u+rw /sys/class/tacho-motor/"+ self.N + "/command")
@@ -51,14 +54,19 @@ class Motor():
         for item in os.listdir("/sys/class/tacho-motor"):
             rpn = open("/sys/class/tacho-motor/" + item + "/address", "r")
             address = rpn.read()
+            address = address.replace("\n", "")
             rpn.close()
-            if address.find(port) > -2:
+            if address == port:
+                print(port + " found as " + item)
+                #if the port name can be found in address, then execute the code below
                 self.port = port
                 self.N = item
+                break
         command = open("/sys/class/tacho-motor/" + self.N + "/command", "w")
         command.write("reset")
         command.close()
     def run_forever(self, speed):
+        print(self.port + " runs in run_forever mode")
 	#runs the motor with the given speed until another command is send
         command = open("/sys/class/tacho-motor/" + self.N + "/command", "w")
         command_speed = open("/sys/class/tacho-motor/" + self.N + "/speed_sp", "w")
